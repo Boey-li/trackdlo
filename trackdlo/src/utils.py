@@ -176,7 +176,7 @@ def extract_connected_skeleton (visualize_process, mask, img_scale=10, seg_lengt
                 break
     
     # skeletonization
-    result = skeletonize(mask, method='zha')
+    result = skeletonize(mask, method='lee') # method='lee' or 'zhang'
     gray = cv2.cvtColor(result.copy(), cv2.COLOR_BGR2GRAY)
     gray[gray > 100] = 255
     print('Finished skeletonization. Traversing skeleton contours...')

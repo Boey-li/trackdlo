@@ -1,0 +1,1 @@
+rosrun pcl_ros pointcloud_to_pcd input:=/trackdlo/results_pc _prefix:=/mnt/sda/trackdlo/output/
