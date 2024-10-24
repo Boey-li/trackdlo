@@ -5,3 +5,4 @@ data/output/*/*.json
 data/*.bag
 data/
 test.cpp
+eigen-3.3.7

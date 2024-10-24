@@ -395,8 +395,13 @@ def extract_connected_skeleton (visualize_process, mask, img_scale=10, seg_lengt
     mask = np.zeros((gray.shape[0], gray.shape[1], 3), np.uint8)
     while True:
         cur_chain_idx = int(cur_idx/2)
-        cur_chain = pruned_chains[cur_chain_idx]
-
+        try:
+            cur_chain = pruned_chains[cur_chain_idx]
+        except:
+            # raise ValueError('cur_chain_idx = {}, pruned_chains = {}'.format(cur_chain_idx, pruned_chains))
+            import pdb; pdb.set_trace()
+        
+        
         if cur_idx % 2 == 1:
             cur_chain.reverse()
         ordered_chains.append(cur_chain)

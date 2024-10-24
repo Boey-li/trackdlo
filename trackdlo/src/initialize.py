@@ -53,9 +53,16 @@ def callback (rgb, depth):
     global lower, upper
 
     print("Initializing...")
+    
+    print('rgb', rgb.width, rgb.height)
 
     # process rgb image
     cur_image = ros_numpy.numpify(rgb)
+    if cur_image is None:
+        print('No image received.')
+    else:
+        print('current image', cur_image.shape)
+    # import pdb; pdb.set_trace()
     hsv_image = cv2.cvtColor(cur_image.copy(), cv2.COLOR_RGB2HSV)
 
     # process depth image
