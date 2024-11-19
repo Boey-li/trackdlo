@@ -110,8 +110,8 @@ def callback (rgb, depth):
         depth_threshold = 0.58  # m
         extracted_chains_3d = extracted_chains_3d[extracted_chains_3d[:, 2] > depth_threshold]
 
-    # tck, u = interpolate.splprep(extracted_chains_3d.T, s=0.001)
-    tck, u = interpolate.splprep(extracted_chains_3d.T, s=0.0005)
+    tck, u = interpolate.splprep(extracted_chains_3d.T, s=0.001)
+    # tck, u = interpolate.splprep(extracted_chains_3d.T, s=0.0005)
     # 1st fit, less points
     u_fine = np.linspace(0, 1, 300) # <-- num fit points
     x_fine, y_fine, z_fine = interpolate.splev(u_fine, tck)
