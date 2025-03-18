@@ -1,20 +1,17 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 import rospy
 from xarm.wrapper import XArmAPI
 from geometry_msgs.msg import PoseStamped
 from tf.transformations import quaternion_from_euler
+import message_filters
 
-def main():
-    # Initialize ROS node
-    rospy.init_node('xarm_pose_recorder', anonymous=True)
-    
-    # Publisher for xArm pose
-    pose_pub = rospy.Publisher('xarm/pose', PoseStamped, queue_size=10)
-    
+def callback():
     # Initialize xArmAPI; adjust the IP address as needed.
     robot_ip = "192.168.1.209"
     arm = XArmAPI(robot_ip)
     arm.set_mode(1)
+    print(f'robot ip: {robot_ip}')
     
     # Set the loop rate (10 Hz in this example)
     rate = rospy.Rate(10)
@@ -50,7 +47,10 @@ def main():
         rate.sleep()
 
 if __name__ == '__main__':
-    try:
-        main()
-    except rospy.ROSInterruptException:
-        pass
+    # Initialize ROS node
+    rospy.init_node('xarm_pose_recorder', anonymous=True)
+    
+    # Publisher for xArm pose
+    pose_pub = rospy.Publisher('/xarm/pose', PoseStamped, queue_size=10)
+    
+    rospy.spin()
