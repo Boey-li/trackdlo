@@ -3,6 +3,8 @@
 import rospy
 from xarm.wrapper import XArmAPI
 from geometry_msgs.msg import PoseStamped
+from sensor_msgs.msg import Image
+from std_msgs.msg import Float32
 from tf.transformations import quaternion_from_euler
 import message_filters
 
@@ -11,17 +13,18 @@ def callback():
     robot_ip = "192.168.1.209"
     arm = XArmAPI(robot_ip)
     arm.set_mode(1)
+    print('Save XARM6 pose')
     print(f'robot ip: {robot_ip}')
     
-    # Set the loop rate (10 Hz in this example)
-    rate = rospy.Rate(10)
+    # Set the loop rate (15 Hz to customize other topics)
+    rate = rospy.Rate(15)
     
     while not rospy.is_shutdown():
         # Get current xArm position; get_position() returns [status, pose]
-        result = arm.get_position()
-        pose_data = result[1]
+        pose_data = arm.get_position()[1]
+        gripper_data = arm.get_gripper_position()[1]
         
-        if pose_data is not None and len(pose_data) >= 6:
+        if pose_data is not None and gripper_data is not None:
             # Create a PoseStamped message and fill it with data
             pose_msg = PoseStamped()
             pose_msg.header.stamp = rospy.Time.now()
@@ -41,6 +44,12 @@ def callback():
             
             # Publish the pose message
             pose_pub.publish(pose_msg)
+            
+            # Create a Float32 message for gripper openness and publish it
+            gripper_msg = Float32()
+            gripper_msg.data = gripper_data
+            gripper_pub.publish(gripper_msg)
+            
         else:
             rospy.logwarn("Invalid or incomplete pose data received from xArm")
             
@@ -50,7 +59,12 @@ if __name__ == '__main__':
     # Initialize ROS node
     rospy.init_node('xarm_pose_recorder', anonymous=True)
     
+    rgb_topic = rospy.get_param('/init_tracker/rgb_topic')
+    rgb_sub = message_filters.Subscriber(rgb_topic, Image)
+    
     # Publisher for xArm pose
-    pose_pub = rospy.Publisher('/xarm/pose', PoseStamped, queue_size=10)
+    pose_pub = rospy.Publisher('/xarm/pose', PoseStamped, queue_size=30)
+    gripper_pub = rospy.Publisher('/xarm/gripper', Float32, queue_size=30)
+    callback()
     
     rospy.spin()

@@ -276,8 +276,6 @@ sensor_msgs::ImagePtr Callback(const sensor_msgs::ImageConstPtr& image_msg, cons
             shortest_node_pt_dists.insert(std::pair<int, double>(m, shortest_dist));
         }
 
-        // std::cout << "279" << std::endl;
-
         // for current nodes and edges in Y, sort them based on how far away they are from the camera
         std::vector<double> averaged_node_camera_dists = {};
         std::vector<int> indices_vec = {};
@@ -346,8 +344,6 @@ sensor_msgs::ImagePtr Callback(const sensor_msgs::ImageConstPtr& image_msg, cons
             cv::line(projected_edges, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 255, 255), dlo_pixel_width);
         }
 
-        // std::cout << "349" << std::endl;
-
         // sort visible nodes to preserve the original connectivity
         std::sort(visible_nodes.begin(), visible_nodes.end());
 
@@ -368,18 +364,16 @@ sensor_msgs::ImagePtr Callback(const sensor_msgs::ImageConstPtr& image_msg, cons
         // store Y_0 for post processing
         MatrixXd Y_0 = Y.replicate(1, 1);
 
-        std::cout << "371" << std::endl;
-        std::cout << mask.rows << ", " << mask.cols << std::endl;
-        std::cout << visible_nodes.size() << std::endl;
-        std::cout << visible_nodes_extended.size() << std::endl;
+        // std::cout << "371" << std::endl;
+        // std::cout << mask.rows << ", " << mask.cols << std::endl;
+        // std::cout << visible_nodes.size() << std::endl;
+        // std::cout << visible_nodes_extended.size() << std::endl;
         
         // step tracker
         tracker.tracking_step(X, visible_nodes, visible_nodes_extended, proj_matrix, mask.rows, mask.cols);
         Y = tracker.get_tracking_result();
         guide_nodes = tracker.get_guide_nodes();
         priors = tracker.get_correspondence_pairs();
-
-        std::cout << "379" << std::endl;
 
         // log time
         time_diff = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - cur_time).count() / 1000.0;
